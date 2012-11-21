@@ -19,4 +19,8 @@ public class Output {
 	public static void println(String msg) {
 		System.out.println(msg);
 	}
+	
+	public static void printError(String msg) {
+		System.err.println("ERROR: " + msg);
+	}
 }

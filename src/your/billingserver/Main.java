@@ -2,8 +2,10 @@ package your.billingserver;
 
 import java.io.IOException;
 import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import your.billingserver.objects.User;
+import your.billingserver.objects.ManagementUser;
 import your.common.helper.Output;
 import your.common.rmi.BillingServer;
 
@@ -27,30 +29,31 @@ public class Main {
 	public static void main(String[] args) {
 		if (args.length == 1) {
 			billingServerBindingName = args[0];
-			List<User> users = getUsersFromPropertyFile();
+			List<ManagementUser> users = getManagementUsersFromPropertyFile();
 			
 			billingServer = new BillingServerImpl(users);
-			exportRemoteObject();
-			billingServer.run();
-			unexportRemoteObject();
+			if (exportRemoteObject()) {
+				billingServer.run();
+				unexportRemoteObject();
+			}
 			
 		} else {
 			Output.println("argument billingserver-bindingname is missing");
 		}
 	}
 
-	private static List<User> getUsersFromPropertyFile() {
+	private static List<ManagementUser> getManagementUsersFromPropertyFile() {
 		Properties pro = new Properties();
 		try{
 			java.io.InputStream in = ClassLoader.getSystemResourceAsStream("user.properties");
 			pro.load(in);
 			Enumeration<Object> em = pro.keys();
-			List<User> users = Collections.synchronizedList(new ArrayList<User>());
+			List<ManagementUser> users = Collections.synchronizedList(new ArrayList<ManagementUser>());
 			
 			while (em.hasMoreElements()) {
 				String user = (String) em.nextElement();
 				String pwd = pro.getProperty(user);
-				users.add(new User(user, pwd));
+				users.add(new ManagementUser(user, pwd));
 			}
 			
 			return users;
@@ -61,16 +64,31 @@ public class Main {
 		return null;
 	}
 	
-	private static void exportRemoteObject() {
+	private static boolean exportRemoteObject() {
+		Registry registry = null;
 		try {
-            Registry registry = LocateRegistry.createRegistry(billingServer.getRmiPort());            
-            BillingServer stub = (BillingServer) UnicastRemoteObject.exportObject(billingServer, billingServer.getRmiPort());
-            registry.rebind(billingServerBindingName, stub);
-            
-            Output.println("BillingServer exported");
-        } catch (Exception e) {
-            Output.println("error on exporting Remote Object");    
-        }
+            registry = LocateRegistry.createRegistry(billingServer.getRmiPort());            
+        } catch (ExportException e) {
+        	try {
+				registry = LocateRegistry.getRegistry(billingServer.getRmiPort());
+			} catch (RemoteException e1) {
+				Output.printError("on get Registry"); 
+				return false;
+			}  
+        } catch (RemoteException e) {
+        	Output.printError("on create Registry"); 
+			return false;
+		}
+		
+        try {
+        	BillingServer stub = (BillingServer) UnicastRemoteObject.exportObject(billingServer, billingServer.getRmiPort());
+	        registry.rebind(billingServerBindingName, stub);
+		} catch (RemoteException e) {
+			Output.printError("on exporting Remote Object"); 
+			return false;
+		}
+        
+		return true;
 	}
 	
 	private static void unexportRemoteObject() {
@@ -79,7 +97,7 @@ public class Main {
 			
 			Output.println("BillingServer unexported");
 		} catch (NoSuchObjectException e) {
-			Output.println("error on unexporting Remote Object");
+			Output.printError("on unexporting Remote Object");
 		}
 	}
 }
