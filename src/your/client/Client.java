@@ -8,24 +8,24 @@ public class Client {
 	private int clientUdpPort;
 	private String currentUserName = "";
 	
-	private ServerNotificationListener serverNotificationListener;
+	//private ServerNotificationListener serverNotificationListener;
 	private ConsoleCommandListener consoleCommandListener;
 	
 	public Client(String serverHost, int serverTcpPort, int clientUdpPort) {
 		this.clientUdpPort = clientUdpPort;
-		serverNotificationListener = new ServerNotificationListener();
+		//serverNotificationListener = new ServerNotificationListener();
 		consoleCommandListener = new ConsoleCommandListener(serverHost, serverTcpPort);
 	}
 
 	public void start() {
 		Output.h1("Client-Start");
-		MyThreadPool.execute(serverNotificationListener);
+		//MyThreadPool.execute(serverNotificationListener);
 		consoleCommandListener.start();
 	}
 	
 	public void shutdown() {
 		Output.h1("Client-End");
-		serverNotificationListener.stop();
+		//serverNotificationListener.stop();
 		consoleCommandListener.stop();
 		MyThreadPool.shutdown();
 	}
