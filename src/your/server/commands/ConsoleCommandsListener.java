@@ -8,7 +8,7 @@ public class ConsoleCommandsListener {
 	
 	public void run() {
 		Scanner in = new Scanner(System.in);
-		in.nextLine();
+		while (!in.nextLine().equals("!end")) {}
 		
 		Main.getServer().stop();
 	}

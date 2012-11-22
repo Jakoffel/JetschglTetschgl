@@ -15,11 +15,17 @@ public class Server {
 	private ClientCommandListener clientCommandListener;
 	private ConsoleCommandsListener consoleCommandListener;
 	
-	public Server(int tcpPort) {
+	private String analyticsBindingName;
+	private String billingBindingName;
+	
+	public Server(int tcpPort, String analyticsBindingName, String billingBindingName) {
 		userManagement = new UserManagement();
 		auctionManagement = new AuctionManagement();
 		clientCommandListener = new ClientCommandListener(tcpPort);
 		consoleCommandListener = new ConsoleCommandsListener();
+		
+		this.analyticsBindingName = analyticsBindingName;
+		this.billingBindingName = billingBindingName;
 	}
 	
 	public UserManagement getUserManagement() {
@@ -42,6 +48,12 @@ public class Server {
 		auctionManagement.stopTimerTasks();
 		MyThreadPool.shutdown();
 	}
-	
-	
+
+	public String getAnalyticsBindingName() {
+		return analyticsBindingName;
+	}
+
+	public String getBillingBindingName() {
+		return billingBindingName;
+	}
 }

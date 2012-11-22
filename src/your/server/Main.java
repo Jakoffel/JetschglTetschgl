@@ -32,7 +32,7 @@ public class Main {
 	private static boolean checkArgs(String[] args) {
 		boolean ok = true;
 		
-		if (args.length != 1) {
+		if (args.length != 3) {
 			ok = false;
 		}
 		
@@ -42,11 +42,19 @@ public class Main {
 			ok = false;
 		}
 		
+		if (args[1].length() == 0) {
+			ok = false;
+		}
+		
+		if (args[2].length() == 0) {
+			ok = false;
+		}
+		
 		return ok;
 	}
 
 	private static Server getFrom(String[] args) {
-		return new Server(Integer.parseInt(args[0]));
+		return new Server(Integer.parseInt(args[0]), args[1], args[2]);
 	}
 
 	private static String usage() {

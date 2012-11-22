@@ -16,8 +16,10 @@ public class AuctionManagement {
 
 	private List<Auction> auctions;
 	private Timer timer;
+	private BillServerHeinz billServerHeinz;
 	
 	public AuctionManagement() {
+		billServerHeinz = new BillServerHeinz();
 		auctions = Collections.synchronizedList(new ArrayList<Auction>());
 		timer = new Timer();
 	}
@@ -85,6 +87,8 @@ public class AuctionManagement {
 				
 				Main.getUserManagement().sendNotificationTo(owner);
 				Main.getUserManagement().sendNotificationTo(winner);
+				
+				billServerHeinz.billAuction(auction.getOwnerName(), auction.getId(), auction.getHighestBid().doubleValue());
 			}
 		};
 		

@@ -34,7 +34,7 @@ public class PriceSteps implements Serializable {
 		PriceStep toDelete = new PriceStep(startPrice, endPrice);
 		
 		if (!priceSteps.contains(toDelete)) {
-			throw new BillingServerException("price step does not exist");
+			throw new BillingServerException("price step ["+startPrice+" "+endPrice+"]does not exist");
 		}
 		
 		priceSteps.remove(toDelete);
@@ -50,6 +50,17 @@ public class PriceSteps implements Serializable {
 		PriceStep step = getPriceStep(price);
 		
 		return step == null ? 0 : step.variablePricePercent;
+	}
+	
+	@Override
+	public synchronized String toString() {
+		String str = "";
+		
+		for(PriceStep step : priceSteps) {
+			str += step.toString();
+		}
+		
+		return str;
 	}
 	
 	private PriceStep getPriceStep(double price) {
@@ -117,6 +128,11 @@ public class PriceSteps implements Serializable {
 					.doubleToLongBits(other.startPrice))
 				return false;
 			return true;
+		}
+		
+		@Override
+		public String toString() {
+			return startPrice + " " + endPrice + " " + fixedPrice + " " + variablePricePercent;
 		}
 	}
 }
