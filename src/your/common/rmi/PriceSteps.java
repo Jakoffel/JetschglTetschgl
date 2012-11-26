@@ -21,13 +21,18 @@ public class PriceSteps implements Serializable {
 	public synchronized void createPriceStep(double startPrice, double endPrice,	double fixedPrice, double variablePricePercent) throws BillingServerException {
 		PriceStep newStep = new PriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 		
-		newStep.checkNegativeValues();
-		
-		for (PriceStep step : priceSteps) {
-			step.checkOverlapWith(newStep);
-		}
+		newStep.checkValues();		
+		checkOverlap(newStep);
 		
 		priceSteps.add(newStep);
+	}
+
+	private void checkOverlap(PriceStep newStep) throws BillingServerException {
+		for (PriceStep step : priceSteps) {
+			if (step.checkOverlap(newStep)) {
+				throw new BillingServerException("there is an start/end-price-overlap");
+			}
+		}
 	}
 	
 	public synchronized void deletePriceStep(double startPrice, double endPrice)	throws RemoteException {
@@ -54,10 +59,10 @@ public class PriceSteps implements Serializable {
 	
 	@Override
 	public synchronized String toString() {
-		String str = "";
+		String str = "\nMin_price Max_price Fee_Fixed Fee_Variable\n";
 		
 		for(PriceStep step : priceSteps) {
-			str += step.toString();
+			str += step.toString() + "\n";
 		}
 		
 		return str;
@@ -83,33 +88,34 @@ public class PriceSteps implements Serializable {
 		private double variablePricePercent;
 		
 		public PriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
-			this.startPrice = startPrice;
-			this.endPrice = endPrice;
+			this(startPrice, endPrice);
+			
 			this.fixedPrice = fixedPrice;
 			this.variablePricePercent = variablePricePercent;
 		}
 		
 		public PriceStep(double startPrice, double endPrice) {
 			this.startPrice = startPrice;
-			this.endPrice = endPrice;
+			this.endPrice = endPrice == 0d ? Double.MAX_VALUE : endPrice;
 		}
 
-		public void checkNegativeValues() throws BillingServerException {
-			if (startPrice < 0 || endPrice < 0 || fixedPrice < 0 || variablePricePercent < 0) {
+		private void checkValues() throws BillingServerException {
+			if (startPrice < 0d || endPrice < 0d || fixedPrice < 0d || variablePricePercent < 0d) {
 				throw new BillingServerException("no negative values!");
 			}
-		}
-
-		public void checkOverlapWith(PriceStep other) throws BillingServerException {
-			//TODO was besseres einfallen lassen, sacrebleu!!!
-			if ((startPrice <= other.startPrice && (other.startPrice < endPrice || endPrice == 0)) ||
-				(startPrice <= other.endPrice && (other.endPrice < endPrice || endPrice == 0))) {
-				throw new BillingServerException("there is an start/end-price-overlap");
+			
+			if (startPrice >= endPrice) {
+				throw new BillingServerException("startPrice < endPrice");
 			}
 		}
 		
-		public boolean contains(double price) {
-			return startPrice <= price && (price < endPrice || endPrice == 0);
+		private boolean contains(double price) {
+			return startPrice < price && price <= endPrice;
+		}
+		
+		private boolean checkOverlap(PriceStep other) {
+			return contains(other.endPrice) || contains(other.startPrice+1) || //other intervall inside of intervall
+					(other.startPrice < startPrice && other.endPrice >= endPrice); //this intervall inside of other intervall
 		}
 
 		@Override
@@ -132,7 +138,11 @@ public class PriceSteps implements Serializable {
 		
 		@Override
 		public String toString() {
-			return startPrice + " " + endPrice + " " + fixedPrice + " " + variablePricePercent;
+			String startPriceStr = String.format("%-10s", startPrice);
+			String endPriceStr = String.format("%-10s", endPrice == Double.MAX_VALUE ? 0d : endPrice);
+			String fixedPriceStr = String.format("%-10s", fixedPrice);
+			String variablePricePercentStr = String.format("%-11s", variablePricePercent);
+			return startPriceStr + endPriceStr + fixedPriceStr + variablePricePercentStr;
 		}
 	}
 }

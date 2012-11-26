@@ -11,6 +11,7 @@ public class Bill implements Serializable {
 	private String user;
 	
 	public Bill(String user) {
+		items = new ArrayList<BillItem>();
 		this.user = user;
 	}
 	
@@ -20,7 +21,7 @@ public class Bill implements Serializable {
 	
 	@Override
 	public String toString() {
-		String str = "";
+		String str = "auction-ID strike_price fee_fixed fee_variable fee_total\n";
 		
 		for (BillItem item : items) {
 			str += item + "\n";
@@ -29,7 +30,9 @@ public class Bill implements Serializable {
 		return str;
 	}
 	
-	public class BillItem {
+	public class BillItem implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 		private long auctionId;
 		private double price;
 		
@@ -46,7 +49,12 @@ public class Bill implements Serializable {
 
 		@Override
 		public String toString() {
-			return auctionId + " " + price + " " + feeFixed + " " + feeVariableInPercent + calculateFeeTotal();
+			String auctionIdStr = String.format("%-11s", auctionId);
+			String priceStr = String.format("%-13s", price);
+			String feeFixedStr = String.format("%-10s", feeFixed);
+			String feeVariableInPercentStr = String.format("%-13s", feeVariableInPercent);
+			String total = String.format("%-9s", calculateFeeTotal());
+			return auctionIdStr + priceStr + feeFixedStr + feeVariableInPercentStr + total;
 		}
 
 		private double calculateFeeTotal() {

@@ -18,8 +18,8 @@ public class AuctionManagement {
 	private Timer timer;
 	private BillServerHeinz billServerHeinz;
 	
-	public AuctionManagement() {
-		billServerHeinz = new BillServerHeinz();
+	public AuctionManagement(String billingBindingName) {
+		billServerHeinz = new BillServerHeinz(billingBindingName);
 		auctions = Collections.synchronizedList(new ArrayList<Auction>());
 		timer = new Timer();
 	}

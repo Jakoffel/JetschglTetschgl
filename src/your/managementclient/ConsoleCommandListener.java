@@ -51,11 +51,16 @@ public class ConsoleCommandListener {
 				removeStep(line);
 				bill(line);
 				logout(line);
-			} catch (BillingServerException e) {
-				Output.println(e.getMessage());
 			} catch (RemoteException e) {
-				Output.printError("remote ");
+				if (e.getCause() instanceof BillingServerException) {
+					Output.println(e.getCause().getMessage());
+				} else {
+					Output.printError("communication with billing/analyticserver");
+					e.printStackTrace();
+				}
 			}
+			
+			line = in.nextLine();
 		}
 	}
 
@@ -147,7 +152,7 @@ public class ConsoleCommandListener {
 				double end = Double.parseDouble(args[2]);
 				
 				billingServerSecure.deletePriceStep(start, end);
-				Output.println("Price step [" + start + " " + end + "] does not exist");
+				Output.println("Price step [" + start + " " + end + "] successfully removed");
 			} catch (NumberFormatException e) {
 				Output.printError("no strings");
 			}
@@ -173,7 +178,7 @@ public class ConsoleCommandListener {
 	}
 
 	private void logout(String line) {
-		if (!line.contains("!removeStep")) {
+		if (!line.contains("!logout")) {
 			return;
 		}
 		

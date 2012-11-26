@@ -9,22 +9,21 @@ import your.common.helper.Output;
 import your.common.rmi.BillingServer;
 import your.common.rmi.BillingServerSecure;
 import your.common.rmi.RmiHostPort;
-import your.server.Main;
 
 public class BillServerHeinz {
 	BillingServerSecure serverSecure;
 	
-	public BillServerHeinz() {
+	public BillServerHeinz(String billingBindingName) {
 		RmiHostPort rhp = new RmiHostPort();
 		
 		try {
 			Registry registry = LocateRegistry.getRegistry(rhp.getHost(), rhp.getPort());
-			BillingServer server = (BillingServer) registry.lookup(Main.getServer().getBillingBindingName());
+			BillingServer server = (BillingServer) registry.lookup(billingBindingName);
 			serverSecure = server.login("auctionServer", "fa062259ac376b119949f55de4f4c420");
 		} catch (RemoteException e) {
-			Output.printError("on rmi-zeugs");
+			Output.printError("reference (a stub) to the remote object registry could not be created");
 		} catch (NotBoundException e) {
-			Output.printError("on getting BillingServer");
+			Output.printError(billingBindingName + " is not currently bound");
 		}
 	}
 	
@@ -36,7 +35,7 @@ public class BillServerHeinz {
 				Output.printError("on sending auction-data to billingserver");
 			}
 		} else {
-			Output.printError(" serverSecure-object not generated");
+			Output.printError("serverSecure-object not generated");
 		}
 	}
 }
