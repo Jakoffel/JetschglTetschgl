@@ -28,6 +28,10 @@ public class AnalyticServerHeinz {
 	}
 	
 	public void processEvent(Event event) {
+		if (analyticServer == null) {
+			return;
+		}
+		
 		try {
 			analyticServer.processEvent(event);
 		} catch (RemoteException e) {

@@ -16,7 +16,7 @@ public class Main {
 	
 	private static double bid;
 	public static synchronized BigDecimal getBid() {
-		bid += 0.01;
+		bid += 1;
 		return new BigDecimal(bid);
 	}
 

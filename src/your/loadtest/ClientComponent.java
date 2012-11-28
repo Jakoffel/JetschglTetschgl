@@ -2,6 +2,8 @@ package your.loadtest;
 
 import java.util.ArrayList;
 
+import your.common.helper.MyThreadPool;
+
 public class ClientComponent implements Runnable {
  
 	private ArrayList<ClientTester> clientTesters;
@@ -21,7 +23,7 @@ public class ClientComponent implements Runnable {
 	@Override
 	public void run() {
 		for (ClientTester tester : clientTesters) {
-			tester.run();
+			MyThreadPool.execute(tester);
 		}
 	}
 

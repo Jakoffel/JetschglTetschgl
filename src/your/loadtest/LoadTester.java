@@ -24,9 +24,10 @@ public class LoadTester {
 		MyThreadPool.execute(managementClient);
 		
 		Scanner in = new Scanner(System.in);
-		while (!in.nextLine().equals("!end")) {}
+		while (!in.nextLine().equals("!exit")) {}
 		client.stop();
 		managementClient.stop();
+		MyThreadPool.shutdown();
 	}
 	
 }

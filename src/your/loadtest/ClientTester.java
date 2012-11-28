@@ -21,9 +21,10 @@ import your.common.commands.BidCommand;
 import your.common.commands.CreateCommand;
 import your.common.commands.ListCommand;
 import your.common.commands.LoginCommand;
+import your.common.commands.LogoutCommand;
 import your.common.helper.Output;
 
-public class ClientTester {
+public class ClientTester implements Runnable {
 	private static AtomicInteger clientCounter = new AtomicInteger(0);
 	private String userName;
 
@@ -151,6 +152,7 @@ public class ClientTester {
 	}
 
 	public void run() {
+		Output.println("User " + userName + "started");
 		try {
 			createStreams();
 			login();
@@ -159,14 +161,19 @@ public class ClientTester {
 			
 		} catch (SocketException e) {
 			Output.printError("connection lost");
+			stop();
 		} catch (EOFException e) {
 			Output.printError("connection lost");
+			stop();
 		} catch (UnknownHostException e) {
 			Output.printError("Unknown serverhost");
+			stop();
 		} catch (IOException e) {
 			Output.printError("IOException");
+			stop();
 		} catch (ClassNotFoundException e) {
 			Output.printError("ClassNotFoundException");
+			stop();
 		} 
 	}
 	
@@ -188,6 +195,16 @@ public class ClientTester {
 	}
 	
 	public void stop() {
+		Output.println("User " + userName + "stopped");
+		
+		try {
+			LogoutCommand logout = new LogoutCommand(userName);
+			out.writeObject(logout);
+			out.flush();
+		} catch (IOException e) {
+			Output.printError("on logging out user");
+		}
+		
 		try {
 			timer.cancel();
 			
