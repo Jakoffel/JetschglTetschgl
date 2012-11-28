@@ -5,14 +5,17 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 import your.common.helper.Output;
+import your.common.rmi.AnalyticsServer;
 import your.common.rmi.Bill;
 import your.common.rmi.BillingServer;
 import your.common.rmi.BillingServerSecure;
+import your.common.rmi.NotificationCallback;
 import your.common.rmi.PriceSteps;
 import your.common.rmi.RmiHostPort;
 import your.common.rmi.exceptions.BillingServerException;
@@ -23,19 +26,31 @@ public class ConsoleCommandListener {
 
 	private BillingServer billingServer;
 	private BillingServerSecure billingServerSecure;
+	private AnalyticsServer analyticsServer;
 	private String userName;
+	private NotificationCallbackImpl notification;
 
 	public ConsoleCommandListener(String analyticsServerBindingName, String billingServerBindingName) {
 		super();
 		rhp = new RmiHostPort();
+		notification = new NotificationCallbackImpl();
 
 		try {
 			Registry registry = LocateRegistry.getRegistry(rhp.getHost(), rhp.getPort());
 			billingServer = (BillingServer) registry.lookup(billingServerBindingName);
+			analyticsServer = (AnalyticsServer) registry.lookup(analyticsServerBindingName);
+			
+			
 		} catch (RemoteException e) {
 			Output.printError("on rmi-zeugs");
 		} catch (NotBoundException e) {
 			Output.printError("on getting BillingServer");
+		}
+		
+		try {
+			UnicastRemoteObject.exportObject(notification);
+		} catch (RemoteException e) {
+			Output.printError("on exporting notification");
 		}
 	}
 
@@ -43,7 +58,7 @@ public class ConsoleCommandListener {
 		Scanner in = new Scanner(System.in);
 		String line = in.nextLine();
 
-		while (!line.equals("!end")) {
+		while (!line.equals("!exit")) {
 			try {
 				login(line);
 				steps(line);
@@ -51,6 +66,9 @@ public class ConsoleCommandListener {
 				removeStep(line);
 				bill(line);
 				logout(line);
+				subscribe(line);
+				unsubscribe(line);
+				
 			} catch (RemoteException e) {
 				if (e.getCause() instanceof BillingServerException) {
 					Output.println(e.getCause().getMessage());
@@ -190,6 +208,32 @@ public class ConsoleCommandListener {
 		Output.println(userName + "successfully logged out");
 		billingServerSecure = null;
 		userName = "";
+	}
+	
+	private void subscribe(String line) throws RemoteException {
+		if (!line.contains("!subscribe")) {
+			return;
+		}
+	
+		String args[] = checkArgs(line, 2);
+		
+		if(args != null) {
+			analyticsServer.subscribe(args[1], notification);
+		}
+		
+	}
+	
+	private void unsubscribe(String line) throws RemoteException {
+		if(!line.contains("!unsubscribe")) {
+			return;
+		}
+		
+		String args[] = checkArgs(line, 2);
+		
+		if(args != null) {
+			int subscriptionID = Integer.parseInt(args[1]);
+			analyticsServer.unsubscribe(subscriptionID);
+		}
 	}
 
 	private boolean isLoggedIn() {

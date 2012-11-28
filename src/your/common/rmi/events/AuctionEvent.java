@@ -7,11 +7,15 @@ public class AuctionEvent extends Event {
 	
 	public AuctionEvent(String t, long ti, int aid){
 		
-		super(t, ti);
+		super(t);
 		auctionID=aid;
 	}
 
 	public long getAuctionID() {
 		return auctionID;
+	}
+	
+	public long getTimeStamp() {
+		return time;
 	}
 }
