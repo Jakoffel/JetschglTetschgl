@@ -26,4 +26,19 @@ public class BidEvent extends Event {
 		return auctionID;
 	}
 	
+	@Override
+	public String toString() {
+		String output="";
+		if(type.equals("BID_PLACED")) {
+			output="Neues Gebot von " +userName + "für Auktion mit der Auktionsnummer " + auctionID + " abgegeben. Gebotshöhe: " + price;
+		}
+		if(type.equals("BID_OVERBID")) {
+			output="Neues Höchstgebot durch " + userName + " für Auktion mit der Auktionsnummer " + auctionID +". Gebotshöhe: " + price;
+		}
+		if(type.equals("BID_WON")) {
+			output="Bieter " + userName + " gewinnt Auktion mit der Auktionsnummer " + auctionID + " Preis: " + price;
+		}
+		return output;
+	}
+	
 }

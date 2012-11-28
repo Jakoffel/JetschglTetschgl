@@ -18,4 +18,18 @@ public class AuctionEvent extends Event {
 	public long getTimeStamp() {
 		return time;
 	}
+	
+	@Override
+	public String toString() {
+		String output="";
+		
+		if(type.equals("AUCTION_STARTED")) {
+			output="Neue Auktion mit der Auktionsnummer " + auctionID + " erstellt";
+		}
+		if(type.equals("AUCTION_ENDED")) {
+			output="Auktion mit der Auktionsnummer " + auctionID + " beendet.";
+		}
+		return output;
+		
+	}
 }

@@ -63,10 +63,6 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 				userSubscriptionList.get(i).sendNotification(event.toString());
 			}
 		}
-		
-		
-		
-		
 	}
 	
 	private void createBidStatisticsEvent() {

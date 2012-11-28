@@ -26,4 +26,20 @@ public class UserEvent extends Event {
 	private void assignNewSessionID() {
 		sessionID = sessionIdCounter.getAndIncrement();
 	}
+	
+	@Override
+	public String toString() {
+		String output="";
+		if(type.equals("USER_LOGIN")) {
+			output="User " +userName+" eingeloggt.";
+		}
+		if(type.equals("USER_LOGOUT")) {
+			output="User " + userName+" ausgeloggt.";
+		}
+		if(type.equals("USER_DISCONNECTED")) {
+			output="User " + userName + " ausgeloggt.";
+		}
+		return output;
+	
+	}
 }
