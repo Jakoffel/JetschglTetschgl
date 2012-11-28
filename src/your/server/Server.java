@@ -3,6 +3,7 @@ package your.server;
 
 import your.common.helper.MyThreadPool;
 import your.common.helper.Output;
+import your.common.rmi.events.Event;
 import your.server.commands.ClientCommandListener;
 import your.server.commands.ConsoleCommandsListener;
 import your.server.management.AuctionManagement;
@@ -10,6 +11,8 @@ import your.server.management.UserManagement;
 
 public class Server {
 
+	private AnalyticServerHeinz analyticServer;
+	
 	private UserManagement userManagement;
 	private AuctionManagement auctionManagement;
 	private ClientCommandListener clientCommandListener;
@@ -20,6 +23,7 @@ public class Server {
 		auctionManagement = new AuctionManagement(billingBindingName);
 		clientCommandListener = new ClientCommandListener(tcpPort);
 		consoleCommandListener = new ConsoleCommandsListener();
+		analyticServer = new AnalyticServerHeinz(analyticsBindingName);
 	}
 	
 	public UserManagement getUserManagement() {
@@ -41,5 +45,9 @@ public class Server {
 		clientCommandListener.stopListening();
 		auctionManagement.stopTimerTasks();
 		MyThreadPool.shutdown();
+	}
+
+	public void processEvent(Event event) {
+		analyticServer.processEvent(event);
 	}
 }

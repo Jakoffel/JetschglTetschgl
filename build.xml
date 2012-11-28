@@ -14,6 +14,7 @@
     <property name="mgmtclient.name" value="your.managementclient.Main"/><!-- Management Client's full class name (including the package) -->
     <property name="analytics.name" value="your.analyticsserver.Main"/><!-- Analytics Server's full class name (including the package) -->
     <property name="billing.name" value="your.billingserver.Main"/><!-- Billing Server's full class name (including the package) -->
+	<property name="loadtest.name" value="your.loadtest.Main"/>
     <property name="analytics.bindingName" value="AnalyticsServerRef"/><!-- RMI Binding Name of the Analytics Server -->
     <property name="billing.bindingName" value="BillingServerRef"/><!-- RMI Binding Name of the Billing Server -->
     <property name="server.port" value="11960"/><!-- TCP port -->
@@ -98,10 +99,11 @@
     </target>
 
     <target name="run-loadtest" depends="compile" description="Run Load Test.">
-        <java classname="${client.name}" fork="true" classpathref="project.classpath">
+        <java classname="${loadtest.name}" fork="true" classpathref="project.classpath">
             <arg value="${server.host}"/>
             <arg value="${server.port}"/>
             <arg value="${analytics.bindingName}"/>
+            <arg value="${billing.bindingName}"/>
         </java>
     </target>
 

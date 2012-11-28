@@ -20,6 +20,7 @@ import your.common.commands.ListCommand;
 import your.common.commands.LoginCommand;
 import your.common.commands.LogoutCommand;
 import your.common.helper.Output;
+import your.common.rmi.events.UserEvent;
 import your.server.Main;
 import your.server.objects.Auction;
 
@@ -27,6 +28,7 @@ public class ClientCommandHandler implements Runnable {
 	private Socket socket;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
+	private String currentUserName = "not logged in";
 
 	private AtomicBoolean listenToClient = new AtomicBoolean(true); 
 
@@ -60,10 +62,12 @@ public class ClientCommandHandler implements Runnable {
 					out.writeObject(result);
 					out.flush();
 				}
-			} catch (EOFException e) { 
+			} catch (EOFException e) {
+				Main.processEvent(new UserEvent("USER_DISCONNECTED", 1, currentUserName));
 				Output.println("No connection to Client");
-				stop();
+				stop(); 
 			} catch (SocketException e) { 
+				Main.processEvent(new UserEvent("USER_DISCONNECTED", 1, currentUserName));
 				Output.println("No connection to Client");
 				stop();
 			} catch (ClassNotFoundException e) {
@@ -120,6 +124,7 @@ public class ClientCommandHandler implements Runnable {
 		
 		if (login) {
 			cmd.setResult("Succesfully logged in as " + cmd.getUserName() + "!");
+			currentUserName = cmd.getUserName();
 		} else {
 			cmd.setError("User " + cmd.getUserName() + " is already logged in!");
 		}
@@ -132,6 +137,7 @@ public class ClientCommandHandler implements Runnable {
 		
 		if (logout) {
 			cmd.setResult("Succesfully logged out as " + cmd.getUserName() + "!");
+			currentUserName = "not logged in";
 		} else {
 			cmd.setError("You have to log in first!");
 		}

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import your.common.rmi.events.AuctionEvent;
+import your.common.rmi.events.BidEvent;
 import your.server.Main;
 import your.server.objects.Auction;
 import your.server.objects.AuctionEndNotification;
@@ -35,6 +37,7 @@ public class AuctionManagement {
 		auctions.add(auction);
 		timer.schedule(createAuctionEndTask(auction), auction.getEndDate());
 		
+		Main.processEvent(new AuctionEvent("AUCTION_STARTED", 1, auction.getId()));
 		return auction;
 	}
 	
@@ -89,6 +92,8 @@ public class AuctionManagement {
 				Main.getUserManagement().sendNotificationTo(winner);
 				
 				billServerHeinz.billAuction(auction.getOwnerName(), auction.getId(), auction.getHighestBid().doubleValue());
+				Main.processEvent(new AuctionEvent("AUCTION_ENDED", 1, auction.getId()));
+				Main.processEvent(new BidEvent("BID_WON", 1, auction.getBidderName(), auction.getHighestBid().doubleValue(), auction.getId()));
 			}
 		};
 		

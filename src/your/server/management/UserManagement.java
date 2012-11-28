@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import your.common.rmi.events.UserEvent;
+import your.server.Main;
 import your.server.objects.Notification;
 import your.server.objects.User;
 
@@ -29,6 +31,7 @@ public class UserManagement {
 			user.setClientHost(clientHost);
 			user.setUdpPort(udpPort);
 			checkUnsentNotifications(user);
+			Main.processEvent(new UserEvent("USER_LOGIN", 1, name));
 			return true;
 		}
 	}
@@ -51,6 +54,7 @@ public class UserManagement {
 		
 		if (user.isLoggedIn()) {
 			user.logout();
+			Main.processEvent(new UserEvent("USER_LOGOUT", 1, name));
 			return true;
 		} else {
 			return false;			

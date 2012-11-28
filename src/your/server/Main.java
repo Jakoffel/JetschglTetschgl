@@ -1,5 +1,6 @@
 package your.server;
 
+import your.common.rmi.events.Event;
 import your.server.management.AuctionManagement;
 import your.server.management.UserManagement;
 
@@ -9,6 +10,10 @@ public class Main {
 	
 	public static Server getServer() {
 		return server;
+	}
+	
+	public static void processEvent(Event event) {
+		server.processEvent(event);
 	}
 	
 	public static UserManagement getUserManagement() {
