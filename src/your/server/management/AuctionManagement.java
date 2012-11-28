@@ -37,7 +37,7 @@ public class AuctionManagement {
 		auctions.add(auction);
 		timer.schedule(createAuctionEndTask(auction), auction.getEndDate());
 		
-		Main.processEvent(new AuctionEvent("AUCTION_STARTED", 1, auction.getId()));
+		Main.processEvent(new AuctionEvent("AUCTION_STARTED", auction.getId()));
 		return auction;
 	}
 	
@@ -92,8 +92,8 @@ public class AuctionManagement {
 				Main.getUserManagement().sendNotificationTo(winner);
 				
 				billServerHeinz.billAuction(auction.getOwnerName(), auction.getId(), auction.getHighestBid().doubleValue());
-				Main.processEvent(new AuctionEvent("AUCTION_ENDED", 1, auction.getId()));
-				Main.processEvent(new BidEvent("BID_WON", 1, auction.getBidderName(), auction.getHighestBid().doubleValue(), auction.getId()));
+				Main.processEvent(new AuctionEvent("AUCTION_ENDED", auction.getId()));
+				Main.processEvent(new BidEvent("BID_WON", auction.getBidderName(), auction.getHighestBid().doubleValue(), auction.getId()));
 			}
 		};
 		

@@ -6,7 +6,7 @@ public class BidEvent extends Event {
 	private double price;
 	private long auctionID;
 	
-	public BidEvent(String t, long ti, String un, double pr, int aid) {
+	public BidEvent(String t, String un, double pr, int aid) {
 		super(t);
 		userName=un;
 		auctionID=aid;

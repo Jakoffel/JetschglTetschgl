@@ -31,7 +31,7 @@ public class UserManagement {
 			user.setClientHost(clientHost);
 			user.setUdpPort(udpPort);
 			checkUnsentNotifications(user);
-			Main.processEvent(new UserEvent("USER_LOGIN", 1, name));
+			Main.processEvent(new UserEvent("USER_LOGIN", name));
 			return true;
 		}
 	}
@@ -54,7 +54,7 @@ public class UserManagement {
 		
 		if (user.isLoggedIn()) {
 			user.logout();
-			Main.processEvent(new UserEvent("USER_LOGOUT", 1, name));
+			Main.processEvent(new UserEvent("USER_LOGOUT", name));
 			return true;
 		} else {
 			return false;			

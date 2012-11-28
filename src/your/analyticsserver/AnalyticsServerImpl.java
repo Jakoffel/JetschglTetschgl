@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 
-import your.billingserver.ConsoleCommandsListener;
 import your.common.rmi.AnalyticsServer;
 import your.common.rmi.NotificationCallback;
 import your.common.rmi.RmiHostPort;
@@ -91,8 +90,8 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 			serverTime /= 60000;
 			double bidCountPerMinute=bidcounter/serverTime;
 			
-			StatisticsEvent newEvent = new StatisticsEvent("BID_PRICE_MAX", timestamp, bidPriceMax);
-			StatisticsEvent newEvent2 = new StatisticsEvent("BID_COUNT_PER_MINUTE", timestamp, bidCountPerMinute);
+			StatisticsEvent newEvent = new StatisticsEvent("BID_PRICE_MAX", bidPriceMax);
+			StatisticsEvent newEvent2 = new StatisticsEvent("BID_COUNT_PER_MINUTE", bidCountPerMinute);
 			eventList.add(newEvent);
 			eventList.add(newEvent2);
 			
@@ -100,8 +99,6 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 	
 
 	private void createUserSessionTimeEvent() {
-			
-			long timestamp = new Date().getTime();
 			double sessionAvg=0;
 			long sessionMin=999999999;
 			long sessionMax=0;
@@ -137,9 +134,9 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 			
 			sessionAvg = allSessionTime/sessionCounter;
 			
-			StatisticsEvent newEvent = new StatisticsEvent("USER_SESSIONTIME_MIN", timestamp, sessionMin);
-			StatisticsEvent newEvent2 = new StatisticsEvent("USER_SESSION_MAX", timestamp, sessionMax);
-			StatisticsEvent newEvent3 = new StatisticsEvent("USER_SESSION_AVG", timestamp, sessionAvg);
+			StatisticsEvent newEvent = new StatisticsEvent("USER_SESSIONTIME_MIN", sessionMin);
+			StatisticsEvent newEvent2 = new StatisticsEvent("USER_SESSION_MAX", sessionMax);
+			StatisticsEvent newEvent3 = new StatisticsEvent("USER_SESSION_AVG", sessionAvg);
 			eventList.add(newEvent);
 			eventList.add(newEvent3);
 			eventList.add(newEvent2);
@@ -147,7 +144,6 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 	}
 	
 	private void createAuctionAvgTimeEvent() {
-			long timestamp = new Date().getTime();
 			//ArrayList<AuctionEvent> endedAuctionEventList = new ArrayList<AuctionEvent>();
 			//ArrayList<AuctionEvent> startedAuctionEventList = new ArrayList<AuctionEvent>();
 			long start=0;
@@ -188,13 +184,12 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 				value = (start-end)/(endedAuctionEventList.size()/2);
 			}
 			*/
-			StatisticsEvent newEvent = new StatisticsEvent("AUCTION_TIME_AVG", timestamp, value);
+			StatisticsEvent newEvent = new StatisticsEvent("AUCTION_TIME_AVG", value);
 			eventList.add(newEvent);
 	}
 	
 	private void createAuctionSuccessRatioEvent() {
 
-		long timestamp = new Date().getTime();
 		double ratio=0;
 		int endedAuctionsCounter=0;
 		int successfulEndedAuctionsCounter=0;
@@ -209,7 +204,7 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 		}
 		ratio = endedAuctionsCounter/successfulEndedAuctionsCounter;
 
-		StatisticsEvent newEvent = new StatisticsEvent("AUCTION_SUCCESS_RATIO", timestamp, ratio);
+		StatisticsEvent newEvent = new StatisticsEvent("AUCTION_SUCCESS_RATIO", ratio);
 		eventList.add(newEvent);
 		
 	}

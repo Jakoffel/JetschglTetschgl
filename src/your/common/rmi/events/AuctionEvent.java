@@ -5,7 +5,7 @@ public class AuctionEvent extends Event {
 
 	private long auctionID;
 	
-	public AuctionEvent(String t, long ti, int aid){
+	public AuctionEvent(String t, int aid){
 		
 		super(t);
 		auctionID=aid;

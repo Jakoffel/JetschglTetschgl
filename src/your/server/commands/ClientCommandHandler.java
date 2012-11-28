@@ -63,11 +63,11 @@ public class ClientCommandHandler implements Runnable {
 					out.flush();
 				}
 			} catch (EOFException e) {
-				Main.processEvent(new UserEvent("USER_DISCONNECTED", 1, currentUserName));
+				Main.processEvent(new UserEvent("USER_DISCONNECTED", currentUserName));
 				Output.println("No connection to Client");
 				stop(); 
 			} catch (SocketException e) { 
-				Main.processEvent(new UserEvent("USER_DISCONNECTED", 1, currentUserName));
+				Main.processEvent(new UserEvent("USER_DISCONNECTED", currentUserName));
 				Output.println("No connection to Client");
 				stop();
 			} catch (ClassNotFoundException e) {

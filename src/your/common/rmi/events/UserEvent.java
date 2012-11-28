@@ -9,7 +9,7 @@ public class UserEvent extends Event {
 	
 	private static AtomicInteger sessionIdCounter = new AtomicInteger(0);
 	
-	public UserEvent(String t, long ti, String un) {
+	public UserEvent(String t, String un) {
 		super(t);
 		userName=un;
 		

@@ -4,7 +4,7 @@ public class StatisticsEvent extends Event {
 	
 	private double value;
 
-	public StatisticsEvent(String t, long ti, double v) {
+	public StatisticsEvent(String t, double v) {
 		super(t);
 		value=v;
 		

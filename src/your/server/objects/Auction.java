@@ -48,7 +48,7 @@ public class Auction {
 		checkBid(bidderName, bid);				
 		sendOverBidNotification(bidderName);
 		highestBid = new Bid(bid, bidderName);
-		Main.processEvent(new BidEvent("BID_PLACED", 1, bidderName, bid.doubleValue(), id));
+		Main.processEvent(new BidEvent("BID_PLACED", bidderName, bid.doubleValue(), id));
 	}
 
 	private void checkBid(String bidderName, BigDecimal bid) throws ServerException {
@@ -75,7 +75,7 @@ public class Auction {
 		
 		NewBidNotification oNot = new NewBidNotification(getBidderName(), id);
 		Main.getUserManagement().sendNotificationTo(oNot);
-		Main.processEvent(new BidEvent("BID_OVERBID", 1, bidderName, getHighestBid().doubleValue(), id));
+		Main.processEvent(new BidEvent("BID_OVERBID", bidderName, getHighestBid().doubleValue(), id));
 	}
 
 	public synchronized boolean isAvailable() {
