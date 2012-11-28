@@ -11,8 +11,7 @@ public class ManagementUser {
 	private NotificationCallback callback;
 	private String filter;
 	
-	public ManagementUser(NotificationCallback callback,
-			String filter) {
+	public ManagementUser(String filter, NotificationCallback callback) {
 
 		this.callback = callback;
 		this.filter = filter;

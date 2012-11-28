@@ -15,14 +15,14 @@ import java.util.List;
 public class AnalyticsServerImpl implements AnalyticsServer {
 	
 	private RmiHostPort rhp;
-	private ArrayList<Event> eventList = new ArrayList<Event>();
+	private List<Event> eventList;
 	private List<ManagementUser> managementUserList;
 	
 	
 	public AnalyticsServerImpl() {
 		rhp = new RmiHostPort();
 		managementUserList = Collections.synchronizedList(new ArrayList<ManagementUser>());
-		
+		eventList = Collections.synchronizedList(new ArrayList<Event>());
 	}
 
 	public int getRmiPort() {
@@ -36,8 +36,12 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 	@Override
 	public int subscribe(String filter, NotificationCallback callback)
 			throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		ManagementUser newUser = new ManagementUser(filter, callback);
+		managementUserList.add(newUser);
+		int output = newUser.getUserId();
+
+		return output;
 	}
 
 
@@ -49,7 +53,12 @@ public class AnalyticsServerImpl implements AnalyticsServer {
 
 	@Override
 	public void unsubscribe(int userId) throws RemoteException {
-		// TODO Auto-generated method stub
+
+		for (int i=0;i<managementUserList.size();i++) {
+			if(managementUserList.get(i).getUserId()==userId) {
+				managementUserList.remove(i);
+			}
+		}
 		
 	}
 }
